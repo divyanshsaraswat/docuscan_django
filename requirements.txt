@@ -1,0 +1,7 @@
+Django==4.2
+django-tailwind==3.4.0
+pillow
+pytesseract
+sumy
+fpdf
+googletrans==4.0.0-rc1

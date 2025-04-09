@@ -1,0 +1,61 @@
+<!-- scanner/templates/scanner/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DocuScan Pro</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="max-w-2xl w-full p-6 bg-white rounded-2xl shadow-lg">
+      <h1 class="text-2xl font-bold mb-4 text-center">DocuScan Pro</h1>
+      <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          capture="environment"
+          required
+          class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg"
+        >
+          Upload and Scan
+        </button>
+      </form>
+
+      {% if text %}
+        <div class="mt-6 space-y-4">
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Extracted Text:</h2>
+            <textarea readonly class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="6">{{ text }}</textarea>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Summary:</h2>
+            <textarea readonly class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="4">{{ summary }}</textarea>
+          </div>
+
+          <div>
+            <h2 class="text-lg font-semibold mb-2">Translation (to Hindi):</h2>
+            <textarea readonly class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="4">{{ translated }}</textarea>
+          </div>
+
+          <div class="flex space-x-4">
+            <a href="{% url 'download_txt' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Download TXT</a>
+            <a href="{% url 'download_pdf' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded">Download PDF</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
