@@ -26,5 +26,5 @@ DocuScan is a Django-based web application that allows users to upload images or
 - Text summarization using `sumy`
 - Translation using `googletrans`
 
-##WalkThrough
-[walkthrough.webm](https://github.com/user-attachments/assets/86c97a1f-c38e-4896-af0d-bf17e8c7d84f)
+## WalkThrough
+[WalkThrough](https://github.com/user-attachments/assets/86c97a1f-c38e-4896-af0d-bf17e8c7d84f)
