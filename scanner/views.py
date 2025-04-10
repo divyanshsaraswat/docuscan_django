@@ -14,10 +14,28 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 
 def summarize_text(text, sentence_count=3):
-    parser = PlaintextParser.from_string(text, Tokenizer("english"))
-    summarizer = LsaSummarizer()
-    summary = summarizer(parser.document, sentence_count)
-    return ' '.join(str(sentence) for sentence in summary)
+    if not text or len(text.strip()) < 100:
+        return 'Text too short for summarization'
+        
+    try:
+        import nltk
+        nltk.download('punkt_tab', quiet=True) 
+        nltk.download('punkt', quiet=True)
+        nltk.download('averaged_perceptron_tagger', quiet=True)
+        
+        parser = PlaintextParser.from_string(text, Tokenizer("english"))
+        
+        summarizer = LsaSummarizer()
+        
+        summary = summarizer(parser.document, sentence_count)
+        
+        if not summary:
+            return 'Could not generate summary'
+            
+        return ' '.join(str(sentence) for sentence in summary)
+        
+    except Exception as e:
+        return f'Error in summarization: {str(e)}'
 
 
 @login_required

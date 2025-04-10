@@ -12,10 +12,16 @@
   {% block content %}
   <div class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4">
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-10 space-y-10">
+      <div class="flex justify-end">
+        <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200">
+          Logout
+        </a>
+      </div>
 
       <!-- Header -->
-      <div class="text-center">
-        <h1 class="text-4xl font-extrabold text-blue-700">📄 DocuScan</h1>
+      <div class="flex flex-col items-center">
+        <img src="{% static 'images/logo.png' %}" alt="DocuScan Logo" style="width: 300px; margin-bottom: 20px;">
+
         <p class="text-gray-600 mt-2">Extract, Summarize & Translate text from images with ease</p>
       </div>
 
@@ -23,8 +29,49 @@
         {% csrf_token %}
         <div>
           <label class="block text-gray-700 font-medium mb-2">Upload Image</label>
-          <input type="file" name="image" accept="image/*"
-                 class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+          <div class="relative">
+            <input type="file" name="image" accept="image/*" id="image-input"
+                   class="hidden" required>
+            <label for="image-input" class="flex items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition-colors">
+              <div class="text-center" id="upload-placeholder">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p class="mt-1 text-sm text-gray-600">Click to upload or drag and drop</p>
+                <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+              </div>
+              <div id="image-preview" class="hidden w-full h-full">
+                <img src="" alt="Preview" class="w-full h-full object-contain">
+              </div>
+              <div id="loading-state" class="hidden absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+              </div>
+            </label>
+          </div>
+          <script>
+            const imageInput = document.getElementById('image-input');
+            const uploadPlaceholder = document.getElementById('upload-placeholder');
+            const imagePreview = document.getElementById('image-preview');
+            const loadingState = document.getElementById('loading-state');
+            const previewImg = imagePreview.querySelector('img');
+            
+            imageInput.addEventListener('change', function(e) {
+              if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                
+                uploadPlaceholder.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+                
+                reader.onload = function(e) {
+                  previewImg.src = e.target.result;
+                  loadingState.classList.add('hidden');
+                  imagePreview.classList.remove('hidden');
+                }
+                
+                reader.readAsDataURL(e.target.files[0]);
+              }
+            });
+          </script>
         </div>
         <div>
           <button type="submit"
