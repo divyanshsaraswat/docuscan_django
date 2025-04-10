@@ -10,6 +10,7 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
 from googletrans import Translator
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 
 def summarize_text(text, sentence_count=3):
@@ -43,7 +44,7 @@ def home(request):
 
         request.session['extracted_text'] = extracted_text
 
-    return render(request, 'scanner/home.html', {
+    return render(request, 'home.html', {
         'text': extracted_text,
         'summary': summary,
         'translated': translated,
@@ -61,11 +62,25 @@ def download_txt(request):
 @login_required
 def download_pdf(request):
     text = request.session.get('extracted_text', '')
+    
     pdf = FPDF()
     pdf.add_page()
+    
     pdf.set_font("Arial", size=12)
+    
+    text = text.encode('utf-8').decode('utf-8')
+    text = text.replace('\u2018', "'").replace('\u2019', "'")
+    text = text.replace('\u201C', '"').replace('\u201D', '"')
+    
     for line in text.split('\n'):
-        pdf.cell(200, 10, txt=line, ln=True)
-    response = HttpResponse(pdf.output(dest='S').encode('latin-1'), content_type='application/pdf')
+        try:
+            encoded_line = line.strip().encode('latin-1', errors='ignore').decode('latin-1')
+            if encoded_line:
+                pdf.multi_cell(190, 10, txt=encoded_line)
+        except Exception as e:
+            continue
+            
+    pdf_content = pdf.output(dest='S').encode('latin-1')
+    response = HttpResponse(pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="extracted_text.pdf"'
     return response

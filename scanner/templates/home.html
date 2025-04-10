@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DocuScan - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  {% block content %}
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-10 space-y-10">
+
+      <!-- Header -->
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-blue-700">📄 DocuScan</h1>
+        <p class="text-gray-600 mt-2">Extract, Summarize & Translate text from images with ease</p>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="space-y-6" id="upload-form">
+        {% csrf_token %}
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Upload Image</label>
+          <input type="file" name="image" accept="image/*"
+                 class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" required>
+        </div>
+        <div>
+          <button type="submit"
+                  class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-lg transition duration-200">
+            📤 Scan Image
+          </button>
+        </div>
+      </form>
+
+      {% if text %}
+      <div class="space-y-6 animate-fade-in">
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">📝 Extracted Text</h3>
+          <div class="bg-gray-100 p-4 border rounded-lg max-h-64 overflow-y-auto whitespace-pre-wrap">
+            {{ text }}
+          </div>
+        </div>
+
+        {% if summary %}
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">🔍 Summary</h3>
+          <div class="bg-yellow-50 p-4 border border-yellow-200 rounded-lg">
+            {{ summary }}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if translated %}
+        <div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">🌐 Translated (Hindi)</h3>
+          <div class="bg-green-50 p-4 border border-green-200 rounded-lg">
+            {{ translated }}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="flex flex-wrap gap-4 pt-4">
+          <a href="{% url 'download_txt' %}"
+             class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-md shadow-md transition">
+            ⬇️ Download TXT
+          </a>
+          <a href="{% url 'download_pdf' %}"
+             class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-md shadow-md transition">
+            📄 Download PDF
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Optional fade animation -->
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  {% endblock %}
+
+</body>
+</html>
